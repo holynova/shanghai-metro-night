@@ -15,7 +15,7 @@ test('all 114 boarding directions have complete official coverage',()=>{let coun
 
 import {edges,stationLines} from '../dist/network.mjs';
 import {edgeInfo} from '../dist/schedule.mjs';
-import {positions} from '../dist/layout.mjs';
+import {positions,mapSize,routePoints,offsetRoute,routeMidpoint} from '../dist/layout.mjs';
 const ten=(from,to,date,minute)=>edgeInfo({line:'10',from,to},date,minute);
 test('all 608 real directed edges have verified daytime service',()=>{assert.equal(edges.length,608);for(const e of edges){const s=edgeInfo(e,'2026-11-16',720);assert.equal(s.state,'open',JSON.stringify(e));assert.ok(s.first<s.last);assert.ok(positions[e.from]&&positions[e.to]);}});
 test('branch junction has three neighbours, never connects branch to Hongqiao directly',()=>{assert.deepEqual(edges.filter(e=>e.line==='10'&&e.from==='龙溪路').map(e=>e.to).sort(),['上海动物园','水城路','龙柏新村'].sort());assert.ok(!edges.some(e=>e.from==='龙柏新村'&&e.to==='虹桥火车站'));});
@@ -52,7 +52,7 @@ test('new transfer stations share one node and all edges remain in map bounds',(
  assert.deepEqual(stationLines('静安寺').map(l=>l.id),['2','7','14']);
  assert.deepEqual(stationLines('长寿路').map(l=>l.id),['7','13']);
  assert.deepEqual(stationLines('马当路').map(l=>l.id),['9','13']);
- for(const p of Object.values(positions)){assert.ok(p[0]>=0&&p[0]<=3000&&p[1]>=0&&p[1]<=1800);}
+ for(const p of Object.values(positions)){assert.ok(p[0]>=0&&p[0]<=mapSize.width&&p[1]>=0&&p[1]<=mapSize.height);}
 });
 
 test('4 is a closed ring with exactly two distinct outgoing directions per station',()=>{
@@ -93,4 +93,28 @@ test('all lines have complete service data on ordinary and extended days at all 
  for(const date of ['2026-11-16','2026-11-20','2026-11-21'])for(const minute of [0,30,300,720,1350,1380,1439])for(const e of edges){
   const s=edgeInfo(e,date,minute);assert.notEqual(s.state,'unknown',JSON.stringify(e));assert.ok(Number.isFinite(s.first)&&Number.isFinite(s.last));
  }
+});
+
+test('official schematic preserves north/south and Pudong/Puxi relationships',()=>{
+ assert.ok(positions['富锦路'][1]<positions['上海火车站'][1]);
+ assert.ok(positions['上海火车站'][1]<positions['人民广场'][1]);
+ assert.ok(positions['沈杜公路'][1]>positions['人民广场'][1]);
+ assert.ok(positions['虹桥火车站'][0]<positions['中山公园'][0]);
+ assert.ok(positions['世纪大道'][0]>positions['人民广场'][0]);
+ assert.ok(positions['上海松江站'][0]<positions['徐家汇'][0]);
+ assert.ok(positions['上海松江站'][1]>positions['徐家汇'][1]);
+ assert.ok(positions['基隆路'][1]<positions['四平路'][1]);
+});
+test('all 608 official route paths meet their physical stations with reversible geometry',()=>{
+ for(const e of edges){
+  const points=routePoints(e);assert.ok(points.length>=2);
+  assert.deepEqual(points[0],positions[e.from]);assert.deepEqual(points.at(-1),positions[e.to]);
+  assert.deepEqual(routePoints({line:e.line,from:e.to,to:e.from}),[...points].reverse());
+  for(const p of offsetRoute(points))assert.ok(p.every(Number.isFinite));
+  assert.ok(Object.values(routeMidpoint(points)).every(Number.isFinite));
+ }
+});
+test('official bends are retained instead of diagonal shortcuts between stations',()=>{
+ assert.ok(routePoints({line:'4',from:'大连路',to:'杨树浦路'}).length>2);
+ assert.ok(routePoints({line:'1',from:'新闸路',to:'人民广场'}).length>2);
 });
