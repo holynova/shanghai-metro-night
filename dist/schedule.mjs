@@ -1,0 +1,13 @@
+import data from './official-data.mjs';
+export {data};
+export function parseTime(s){if(!s||s.includes('到达')||!s.match(/\d\d:\d\d/))return null;const [h,m]=s.match(/\d\d:\d\d/)[0].split(':').map(Number);return h*60+m+(s.includes('次')?1440:0);}
+export function dateShift(date,days){return new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);}
+export function extended(date){return [5,6].includes(new Date(date+'T12:00:00Z').getUTCDay());}
+export function todayShanghai(date=new Date()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);}
+function dayWindow(line,i,d,date){const row=data.lines[line]?.[i];if(!row)return null;let first,last,regularLast,extra=[],destination,notes=[];
+ if(line==='1'){const north=d===1;first=parseTime(row[north?1:3]);const early=north?parseTime(row[2]):null;if(early!==null){first=Math.min(first,early);notes.push('清晨首班仅到上海火车站；往富锦路首班 '+row[1]);}last=parseTime(row[extended(date)?north?6:7:north?4:5]);destination=north?'富锦路':'莘庄';regularLast=last;}
+ else {first=parseTime(row[d===1?1:2]);regularLast=parseTime(row[d===1?3:4]);last=regularLast;destination=d===1?'浦东1号2号航站楼':'蟠祥路·国家会计学院';if(d===1){const short=parseTime(row[5]);if(short!==null&&short>last){last=short;destination='广兰路';notes.push('往浦东1号2号航站楼末班 '+row[3]+'；之后的常规车只到广兰路');}const boarding=data.extraTrains.boarding.find(x=>x.station===row[0]);if(boarding){extra=boarding.times.map(parseTime);last=Math.max(last,...extra);notes.push('加班车 '+boarding.times.join(' / ')+'，终点龙阳路；中途仅指定站下客');}else if(data.extraTrains.alightingOnly.includes(row[0]))notes.push('夜间定点加班车在本站只下不上，不延长本站可上车时间');}}
+ if(first===null||last===null)return null;return {first,last,regularLast,destination,notes,extra,date};
+}
+export function directionInfo(line,i,d,date,minute){const current=dayWindow(line,i,d,date),previous=dayWindow(line,i,d,dateShift(date,-1));if(!current)return {state:'unknown'};const previousEnd=previous?previous.last-1440:-Infinity;const carry=previousEnd>minute;const w=carry?previous:current;const open=carry||(minute>=current.first&&minute<current.last);const extraOnly=open&&line==='2'&&d===1&&w.extra.length>0&&minute>=parseTime(data.lines[line][i][5]);return {...w,state:open?'open':'closed',reason:open?(extraOnly?'仅剩定点加班车':carry?'前一运营日服务延续':'仍在服务时段'):minute<current.first?'首班尚未开始':'本站该方向已收车',extraOnly,carry,remaining:open?(carry?previousEnd:current.last)-minute:null};}
+export function serviceTime(m){return (m>=1440?'次日 ':'')+String(Math.floor(m%1440/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
