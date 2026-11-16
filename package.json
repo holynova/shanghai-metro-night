@@ -1,10 +1,16 @@
 {
-  "name": "shanghai-metro-night-demo",
+  "name": "shanghai-metro-night",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/import-official.mjs && python3 scripts/import-map.py && node --check dist/app.mjs && node --check dist/schedule.mjs",
-    "dev": "python3 -m http.server 5179 --directory dist"
+    "dev": "python3 -m http.server 5179 --directory dist",
+    "deploy:check": "wrangler deploy --dry-run",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "version": "1.0.0",
+  "devDependencies": {
+    "wrangler": "4.162.0"
   }
 }

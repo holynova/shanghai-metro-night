@@ -1,35 +1,39 @@
-# 末班之后 · 上海地铁时间地图
+# 末班之后 / Shanghai Metro Night
 
-以官方首末班时刻表展示上海地铁1、2、8、10号线118个车站、244个乘车方向的服务状态。灰色表示在出发站该方向已无后续车可上；不表示轨道空闲或目的地不可达。
+拖动时间轴，查看上海地铁 14 条线路、338 个车站的双向服务状态。站点与线路沿用官方示意图布局，首末班来自官方时刻表；支持站名搜索、跨午夜播放、浅色与深色模式。灰色表示该方向当前无后续班次可上车，不代表轨道上没有列车，也不保证换乘成功。数据核验于 2026-11-16，不含临时运营调整。
 
-运行：`npm run dev`，打开 http://localhost:5179 。无需安装依赖。
+Explore the first and last boarding times of 14 Shanghai Metro lines and 338 stations on the official schematic layout. Search stations, scrub through midnight, and switch between light and dark themes. Gray means no later boarding service at the selected station and direction. This is a published timetable snapshot, not live train tracking or a transfer guarantee.
 
-验证：`npm test`；`npm run build` 从保存的官方表重新生成数据并检查脚本语法。
+![浅色地图 / Light map](assets/screenshot.png)
 
-包含日期、全天/夜间时间轴、播放、当前上海时间、站点详情、地图缩放。1号线按周五/周六延时；2号线处理广兰路短线、虹桥定点加班车和只下不上站。跨午夜继承前一运营日。
+- [在线体验 / Live](https://shanghai-metro-night.xiaosang.cc/)
+- [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
+- [深色预览 / Dark preview](assets/screenshot-dark.png)
 
-数据：2026-11-16 从 https://service.shmetro.com/hcskb/index.htm 直接提取；sources/ 保存原始表及可见正文，政府转载图片辅助核对。scripts/import-official.mjs 按明确列映射导入，不插值。
+<img src="assets/qr.png" width="180" alt="扫码打开上海地铁时间地图 / Open the metro map">
 
-注意：官网 DOM 包含隐藏的旧表列和其他线路，导入仅取当前可见且经政府图表交叉核对的1、2号线列；8、10号线按各自表头明确映射。2号线不采用隐藏的旧“周五周六”列/注释。本站将表定末班分钟开始视为末班已发。
+## 本地运行 / Run locally
 
-适用边界：常规运行计划快照；不含节假日专项方案、临时封站和实时延误。日期选择不是历史档案查询。来源、规则和限制见网站 sources.html。
+```bash
+npm ci
+npm test
+npm run build
+npm run dev
+```
 
-设计与可行性讨论见 FEASIBILITY.md。
+Requires Node.js and Python 3. Open http://localhost:5179.
 
-第一阶段扩展：新增8、10号线全部站点。10号线为树形拓扑，龙溪路分岔；航中路支线及新江湾城以北不套用延时。共享站点具有唯一坐标；虹桥双线共线绘图错开。支持全部/单线筛选、市区/全图/看站名视图，桌面时间轴与地图分区，避免覆盖地图。18项测试覆盖分支及延时边界。
+## 发布 / Deploy
 
+```bash
+npm run deploy:check
+npm run deploy
+```
 
-## 第二阶段已完成（2026-11-16）
-新增 7、9、13 号线全部站点，现共 7 条线路、202 个独立站点、436 个有向相邻区段。按官方表分别处理祁华路—花木路、佘山—杨高中路、金运路—华鹏路的周五/周六延时及跨日。原始官方表与可见页面证据保存在 sources。下一阶段为 4、12、14 号线。
+Cloudflare Workers · `shanghai-metro-night.xiaosang.cc` · v1.0.0
 
+源码与部署配置统一在 main；本地手动发布，不使用自动部署分支或 workflow。
+Source and deployment configuration share main. Deploy manually from the committed production build.
 
-## 第三阶段已完成（2026-11-16）
-新增 4、12、14 号线，现共 10 条线路、258 个独立站点、608 个有向相邻区段。4 号线闭合成环，分别计算内圈/外圈，合并官网宜山路两行中的发车列，末班终到宜山路，不延长其出发方向。12、14 号线不套用周末延时。下一阶段为 3、6、15、18 号线。
-
-
-## 官方示意图布局重绘（2026-11-16）
-废弃逐批手工坐标。全部 258 站与 608 个方向采用上海地铁官网网络示意图的站点坐标与线路几何，保持官方相对方位、4 号线环形、浦东浦西分布和区段弯折。站名沿用官方位置（临平路原 SVG 是轮廓字，单独设置标签偏移），新增黄浦江方位参照与北箭头。来源 https://service.shmetro.com/yxxlt/index.htm ，矢量图标注 D202512。原始配置、几何与参考 SVG 留在 sources；scripts/import-map.py 可离线重建 dist/map-data.mjs。示意图不代表精确经纬度。
-
-
-## 第四阶段（2026-11-16）
-新增 3、6、15、18 号线全部官方运营站点，18 号线含康文路延伸段。现共 14 条线路、338 个独立车站、836 个方向。继续采用官方图几何，补入独立图层的 segment18221848 弯折；3/4 号线共线但保留不同轨迹和末班状态。官方上海儿童医学中心标签分两行显示。
+官方数据与地图来源保存在 sources/；本项目不隶属于上海地铁。详细规则见站内数据来源页。
+Official source snapshots are retained in sources/. This independent project is not affiliated with Shanghai Metro.

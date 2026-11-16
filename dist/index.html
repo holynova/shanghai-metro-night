@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>末班之后｜上海地铁时间地图</title><meta name="description" content="拖动时间，查看上海地铁14条线路各站两个方向的首末班服务状态。"><link rel="stylesheet" href="style.css"><link rel="icon" href="icon.svg" type="image/svg+xml"></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>末班之后｜上海地铁时间地图</title><meta name="description" content="拖动时间，查看上海地铁14条线路各站两个方向的首末班服务状态。"><script src="theme.js"></script><link rel="stylesheet" href="style.css"><link rel="icon" href="icon.svg" type="image/svg+xml"><script defer src="https://cloud.umami.is/script.js" data-website-id="e01c9f78-4607-4e60-b01c-77c8190b12b4"></script></head>
 <body>
-<header><a class="brand" href="index.html"><span class="mark" aria-hidden="true">↗</span><strong>末班之后</strong><span>上海地铁时间地图</span></a><a href="sources.html">数据来源</a></header>
+<header><a class="brand" href="index.html"><span class="mark" aria-hidden="true">↗</span><strong>末班之后</strong><span>上海地铁时间地图</span></a><div class="header-actions"><button type="button" data-theme-toggle aria-label="切换深色模式">深色</button><a href="sources.html">数据来源</a></div></header>
 <main>
 <details class="notice"><summary>按官方时刻表展示，不是实时到站信息</summary><p>数据核验于 2026-11-16。包含常规延时和定点加班车，不含节假日临时调整、封站与延误。<a href="sources.html">查看计算规则</a></p></details>
 <section class="workspace">
@@ -20,5 +20,5 @@
 <input id="slider" type="range" min="0" max="1439" step="1" aria-label="时间轴"><div class="ticks" id="ticks"></div>
 <div class="timeline-bottom"><span id="calendar-note"></span><div class="presets"><button data-time="360">06:00</button><button data-time="1320">22:00</button><button data-time="1380">23:00</button><button data-time="30">00:30</button></div></div>
 </section>
-<footer>独立演示，非上海地铁官方产品。<span>本站提供站台发车时刻，不是进站截止时间。</span></footer>
+<footer><span>独立工具，非上海地铁官方产品。v1.0.0 · <a href="https://github.com/holynova/shanghai-metro-night" target="_blank" rel="noopener">GitHub</a></span><span>本站提供站台发车时刻，不是进站截止时间。</span></footer>
 </main><script type="module" src="app.mjs"></script></body></html>
