@@ -1,0 +1,58 @@
+{
+  "night": {
+    "date": "2026-11-21",
+    "count": "有车方向 144 / 836，338 站"
+  },
+  "day": {
+    "date": "2026-11-21",
+    "count": "有车方向 144 / 836，338 站"
+  },
+  "filter": {
+    "station": "上海南站",
+    "count": "有车方向 0 / 56，29 站",
+    "details": [
+      "3 号线 → 石龙路"
+    ]
+  },
+  "invalid": "未找到“不存在”，请从站名列表中选择。",
+  "desktop": {
+    "width": 1920,
+    "overflow": false,
+    "fonts": [
+      "14px",
+      "24px",
+      "17px",
+      "32px"
+    ]
+  },
+  "mobile": {
+    "width": 390,
+    "overflow": false,
+    "map": {
+      "x": 9,
+      "y": 267,
+      "width": 372,
+      "height": 371.359375,
+      "top": 267,
+      "right": 381,
+      "bottom": 638.359375,
+      "left": 9
+    },
+    "timeline": {
+      "x": 8,
+      "y": 737.359375,
+      "width": 374,
+      "height": 410.796875,
+      "top": 737.359375,
+      "right": 382,
+      "bottom": 1148.15625,
+      "left": 8
+    },
+    "fonts": [
+      "14px",
+      "24px",
+      "17px",
+      "32px"
+    ]
+  }
+}
