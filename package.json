@@ -9,7 +9,7 @@
     "deploy:check": "node scripts/deploy-shared.mjs --dry-run",
     "deploy": "node scripts/deploy-shared.mjs"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "devDependencies": {
     "wrangler": "4.162.0"
   }
