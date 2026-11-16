@@ -20,5 +20,6 @@ function verify(relative=''){
 verify();
 const config=JSON.parse(readFileSync(join(portfolio,'wrangler.jsonc'),'utf8'));
 if(config.name!=='xiaosang-portfolio')throw new Error('Unexpected shared Worker');
-execFileSync(process.execPath,['scripts/stage-cloudflare.mjs','--portfolio-only'],{cwd:portfolio,stdio:'inherit'});
+// The portfolio Wrangler build enforces full gallery preservation and checks remote freshness.
+if(!config.build?.command?.includes('stage-cloudflare.mjs'))throw new Error('Portfolio build must validate and stage the complete shared site');
 execFileSync(join(root,'node_modules/.bin/wrangler'),['deploy','--config','wrangler.jsonc',...(dry?['--dry-run']:[])],{cwd:portfolio,stdio:'inherit'});

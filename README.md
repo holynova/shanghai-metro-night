@@ -6,7 +6,7 @@ Explore the first and last boarding times of 14 Shanghai Metro lines and 338 sta
 
 ![浅色地图 / Light map](assets/screenshot.png)
 
-- [发布地址 / Planned site](https://xiaosang.cc/shanghai-metro-night/) — 待部署验证 / Pending deployment verification.
+- [在线体验 / Live](https://xiaosang.cc/shanghai-metro-night/)
 - [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
 - [深色预览 / Dark preview](assets/screenshot-dark.png)
 
@@ -40,3 +40,6 @@ Official source snapshots are retained in sources/. This independent project is 
 
 应用产物同步到作品集 master 的 shanghai-metro-night/ 后提交推送，再运行发布命令；脚本检查两边产物完全一致，防止只上传本站而覆盖其他项目。
 Copy dist into the portfolio master route, commit and push both repositories, then deploy. The release script checks that all project assets match.
+
+共享站点发布还需要完整图库产物；遵循作品集的 XIAOSANG_GALLERY_DIST 配置，缺失时构建会停止，避免覆盖其他作品。
+The shared build also requires the complete gallery assets via XIAOSANG_GALLERY_DIST and refuses partial publication.
