@@ -1,14 +1,15 @@
 # 末班之后 / Shanghai Metro Night
 
-全屏线路图搭配悬浮搜索、地图工具与时间轴，查看上海地铁 14 条线路、338 个车站的双向服务状态。站点与线路沿用官方示意图布局，首末班来自官方时刻表；支持站名搜索、跨午夜播放、浅色与深色模式。灰色表示该方向当前无后续班次可上车，不代表轨道上没有列车，也不保证换乘成功。数据核验于 2026-11-16，不含临时运营调整。
+全屏线路图搭配悬浮搜索、地图工具与时间轴，查看上海地铁 14 条线路、338 个车站的双向服务状态。站点与线路沿用官方示意图布局，首末班来自官方时刻表；支持站名搜索、浅深色模式与收发车放映：自动快进平稳时段，弹幕提示线路开通与收车。灰色表示该方向当前无后续班次可上车，不代表轨道上没有列车，也不保证换乘成功。数据核验于 2026-11-16，不含临时运营调整。
 
-Use a full-screen schematic with floating search, map tools and timeline to explore the first and last boarding times of 14 Shanghai Metro lines and 338 stations on the official schematic layout. Search stations, scrub through midnight, and switch between light and dark themes. Gray means no later boarding service at the selected station and direction. This is a published timetable snapshot, not live train tracking or a transfer guarantee.
+Use a full-screen schematic with floating search, map tools and timeline to explore the first and last boarding times of 14 Shanghai Metro lines and 338 stations on the official schematic layout. Search stations, switch themes, or watch a daily opening-and-closing film with automatic fast-forward and timed announcements. Gray means no later boarding service at the selected station and direction. This is a published timetable snapshot, not live train tracking or a transfer guarantee.
 
 ![浅色地图 / Light map](assets/screenshot.png)
 
 - [在线体验 / Live](https://xiaosang.cc/shanghai-metro-night/)
 - [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
 - [深色预览 / Dark preview](assets/screenshot-dark.png)
+- [收发车放映 / Timetable film](assets/screenshot-cinema.png)
 
 <img src="assets/qr.png" width="180" alt="扫码打开上海地铁时间地图 / Open the metro map">
 
@@ -30,7 +31,7 @@ npm run deploy:check
 npm run deploy -- /path/to/holynova.github.io
 ```
 
-Shared Worker `xiaosang-portfolio` · `xiaosang.cc/shanghai-metro-night/` · v1.0.1
+Shared Worker `xiaosang-portfolio` · `xiaosang.cc/shanghai-metro-night/` · v1.0.2
 
 源码与部署配置统一在 main；本地手动发布，不使用自动部署分支或 workflow。
 Source and deployment configuration share main. Deploy manually from the committed production build.
