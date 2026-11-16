@@ -20,3 +20,11 @@
 复用先前已核验的官方地图与数据，没有新增或推算时刻。参考了 [Apple Maps 网页](https://maps.apple.com/) 的地图主画布、搜索与独立地图工具布局；苹果地图底图在当前网络未渲染，参考仅限已实际显示的界面结构。
 
 新截图：assets/screenshot.png、screenshot-dark.png、screenshot-mobile.png。全图视图用于观察全网变化；阅读具体站名仍建议“站名”放大。
+
+## 发布验收
+
+- 应用源码 main/0a39fbe2321c9896915407f1938ea0ae5d77014d，v1.0.1。
+- 作品集发布提交 master/4d996061a04b4995388da8ff67617963047a88f4；共享 Worker xiaosang-portfolio，Version ID 5e974805-1bd6-44f0-b129-7112ed341890。
+- https://xiaosang.cc/shanghai-metro-night/ 已返回 v1.0.1。线上作品集 JSON 与发布源码完全一致；图库仍为 v1.0.2、3666 张，完整产物保留。
+- 浏览器验收：默认详情和时间设置收起、主题切换、站点详情打开关闭、跨午夜日期与 144/836 方向一致。作品集新截图正常加载，搜索“末班之后”能定位新简介。
+- Profile 的截图与说明同步到 main/46b076a。二维码与正式路径未变，复用原有已验证二维码。
