@@ -6,7 +6,7 @@ Explore the first and last boarding times of 14 Shanghai Metro lines and 338 sta
 
 ![浅色地图 / Light map](assets/screenshot.png)
 
-- [在线体验 / Live](https://shanghai-metro-night.xiaosang.cc/)
+- [发布地址 / Planned site](https://shanghai-metro-night.xiaosang.cc/) — 尚未上线：Cloudflare Worker 数量达到账户上限。Pending deployment: account Worker quota reached.
 - [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
 - [深色预览 / Dark preview](assets/screenshot-dark.png)
 
