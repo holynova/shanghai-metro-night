@@ -8,8 +8,23 @@ export function todayShanghai(date=new Date()){return new Intl.DateTimeFormat('s
 function dayWindow(line,i,d,date){const row=data.lines[line]?.[i];if(!row)return null;let first,last,regularLast,extra=[],destination,notes=[];
  if(line==='1'){const north=d===1;first=parseTime(row[north?1:3]);const early=north?parseTime(row[2]):null;if(early!==null){first=Math.min(first,early);notes.push('清晨首班仅到上海火车站；往富锦路首班 '+row[1]);}last=parseTime(row[extended(date)?north?6:7:north?4:5]);destination=north?'富锦路':'莘庄';regularLast=last;}
  else if(line==='8'){first=parseTime(row[d===1?2:1]);last=parseTime(row[extended(date)?d===1?6:5:d===1?4:3]);regularLast=last;destination=d===1?'市光路':'沈杜公路';}
- else {first=parseTime(row[d===1?1:2]);regularLast=parseTime(row[d===1?3:4]);last=regularLast;destination=d===1?'浦东1号2号航站楼':'蟠祥路·国家会计学院';if(d===1){const short=parseTime(row[5]);if(short!==null&&short>last){last=short;destination='广兰路';notes.push('往浦东1号2号航站楼末班 '+row[3]+'；之后的常规车只到广兰路');}const boarding=data.extraTrains.boarding.find(x=>x.station===row[0]);if(boarding){extra=boarding.times.map(parseTime);last=Math.max(last,...extra);destination='龙阳路';notes.push('加班车 '+boarding.times.join(' / ')+'，终点龙阳路；中途仅指定站下客');}else if(data.extraTrains.alightingOnly.includes(row[0]))notes.push('夜间定点加班车在本站只下不上，不延长本站可上车时间');}}
- if(first===null||last===null)return null;return {first,last,regularLast,destination,notes,extra,date};
+ else if(['7','9','13'].includes(line)){
+ const forward=d===1,reverseColumns=line==='13';
+ first=parseTime(row[forward?(reverseColumns?2:1):(reverseColumns?1:2)]);
+ const normalIndex=forward?(reverseColumns?4:3):(reverseColumns?3:4);
+ const lateIndex=line==='7'?(forward?5:6):line==='9'?(forward?5:7):(forward?6:5);
+ last=parseTime(row[extended(date)?lateIndex:normalIndex]);
+ destination=forward?lines.find(l=>l.id===line).names.at(-1):lines.find(l=>l.id===line).names[0];
+ if(extended(date)){
+  const shortIndex=line==='7'?(forward?null:7):line==='9'?(forward?6:8):(forward?7:null);
+  const short=shortIndex===null?null:parseTime(row[shortIndex]);
+  if(short!==null&&short>last){notes.push('往'+destination+'末班 '+serviceTime(last));last=short;destination=line==='7'?'祁华路':line==='9'?(forward?'杨高中路':'佘山'):'华鹏路';}
+  notes.push({'7':'周五/周六仅祁华路—花木路区段延时','9':'周五/周六仅佘山—杨高中路区段延时','13':'周五/周六仅金运路—华鹏路区段延时'}[line]);
+ }
+ regularLast=last;
+ }
+ else if(line==='2'){first=parseTime(row[d===1?1:2]);regularLast=parseTime(row[d===1?3:4]);last=regularLast;destination=d===1?'浦东1号2号航站楼':'蟠祥路·国家会计学院';if(d===1){const short=parseTime(row[5]);if(short!==null&&short>last){last=short;destination='广兰路';notes.push('往浦东1号2号航站楼末班 '+row[3]+'；之后的常规车只到广兰路');}const boarding=data.extraTrains.boarding.find(x=>x.station===row[0]);if(boarding){extra=boarding.times.map(parseTime);last=Math.max(last,...extra);destination='龙阳路';notes.push('加班车 '+boarding.times.join(' / ')+'，终点龙阳路；中途仅指定站下客');}else if(data.extraTrains.alightingOnly.includes(row[0]))notes.push('夜间定点加班车在本站只下不上，不延长本站可上车时间');}}
+ if(first==null||last==null)return null;return {first,last,regularLast,destination,notes,extra,date};
 }
 export function directionInfo(line,i,d,date,minute){const current=dayWindow(line,i,d,date),previous=dayWindow(line,i,d,dateShift(date,-1));if(!current)return {state:'unknown'};const previousEnd=previous?previous.last-1440:-Infinity;const carry=previousEnd>minute;const w=carry?previous:current;const open=carry||(minute>=current.first&&minute<current.last);const extraOnly=open&&line==='2'&&d===1&&w.extra.length>0&&minute>=parseTime(data.lines[line][i][5]);return {...w,state:open?'open':'closed',reason:open?(extraOnly?'仅剩定点加班车':carry?'前一运营日服务延续':'仍在服务时段'):minute<current.first?'首班尚未开始':'本站该方向已收车',extraOnly,carry,remaining:open?(carry?previousEnd:current.last)-minute:null};}
 export function serviceTime(m){if(m==null)return '—';return (m>=1440?'次日 ':'')+String(Math.floor(m%1440/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
