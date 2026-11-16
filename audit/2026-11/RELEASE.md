@@ -27,3 +27,15 @@
 - 作品集卡片已推送 master/5513c1c，保留其他并行更新。尚未部署该卡片，线上 repos.json 回读确认还未收录。
 - 原因：首次项目部署后，远端 ee72e47/7336ae3 加入“每次发布必须包含完整图库”的构建保护。已合入并遵守；本机缺少完整图库 dist、原图及衍生图，最新 dry-run 因 Gallery build missing 拒绝继续。未绕过最新保护。此前检查 /xiaosang-gallery/ 已是 404，本站首次发布没有声称修复它。
 - 后续需要提供完整图库生产目录（XIAOSANG_GALLERY_DIST），再执行 npm run deploy，回读作品集 JSON 并检查卡片。地铁站点本身当前可用。
+
+## 续检收尾：作品集已上线（2026-11-16）
+
+此前阻塞已由共享站点后续发布解除，本轮只核验，不重复部署或递增应用版本。
+
+- 完整线上 repos.json 与作品集提交 30e062b7eb2a6fd9a26da42c42d67a26fdfa2269 的 JSON 一致，包含 shanghai-metro-night 条目。
+- 当前共享 Worker deployment ID：c395f40e-7eaf-426c-a183-e1b932d86548；version ID：93792e72-4899-48d6-80ab-77f4b9691960（2026-11-16T12:56:15Z）。该部署来自共享站点后续发布，不是本轮重复发布。
+- 浏览器实际找到卡片，中文/英文简介正确；卡片图片完整加载为 1440px，线上截图与项目 assets/screenshot.png 字节一致。
+- 卡片在线体验跳转 https://xiaosang.cc/shanghai-metro-night/，地图渲染 338 站统计；Repo 链接指向 https://github.com/holynova/shanghai-metro-night。
+- 图库 release.json 恢复可用：v1.0.2，源码 ee4df09520706aac342e9324356858ab15d9a825，22 系列、3666 作品。
+- 作品集本地 master 快进到最新 origin/master/9628016，未触碰用户未跟踪 .impeccable/ 文件。
+- 发布收录已完成。额外发现作品集通用搜索不匹配 title 字段，输入“末班之后”无结果，输入“shanghai-metro-night”能定位；这是主站搜索功能问题，按审计规则记录，未在本次扩展修改主站 UI。
