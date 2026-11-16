@@ -6,7 +6,7 @@ Explore the first and last boarding times of 14 Shanghai Metro lines and 338 sta
 
 ![浅色地图 / Light map](assets/screenshot.png)
 
-- [发布地址 / Planned site](https://shanghai-metro-night.xiaosang.cc/) — 尚未上线：Cloudflare Worker 数量达到账户上限。Pending deployment: account Worker quota reached.
+- [发布地址 / Planned site](https://xiaosang.cc/shanghai-metro-night/) — 待部署验证 / Pending deployment verification.
 - [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
 - [深色预览 / Dark preview](assets/screenshot-dark.png)
 
@@ -27,13 +27,16 @@ Requires Node.js and Python 3. Open http://localhost:5179.
 
 ```bash
 npm run deploy:check
-npm run deploy
+npm run deploy -- /path/to/holynova.github.io
 ```
 
-Cloudflare Workers · `shanghai-metro-night.xiaosang.cc` · v1.0.0
+Shared Worker `xiaosang-portfolio` · `xiaosang.cc/shanghai-metro-night/` · v1.0.0
 
 源码与部署配置统一在 main；本地手动发布，不使用自动部署分支或 workflow。
 Source and deployment configuration share main. Deploy manually from the committed production build.
 
 官方数据与地图来源保存在 sources/；本项目不隶属于上海地铁。详细规则见站内数据来源页。
 Official source snapshots are retained in sources/. This independent project is not affiliated with Shanghai Metro.
+
+应用产物同步到作品集 master 的 shanghai-metro-night/ 后提交推送，再运行发布命令；脚本检查两边产物完全一致，防止只上传本站而覆盖其他项目。
+Copy dist into the portfolio master route, commit and push both repositories, then deploy. The release script checks that all project assets match.
