@@ -66,13 +66,13 @@ for line in network['lines']:
   pts=simplify([points[i] for i in reversed(ids)])
   paths[key]=pts
   if cost[end]>dist(pos[e['from']],pos[e['to']])*1.8:audit.append([key,round(cost[end]),round(dist(pos[e['from']],pos[e['to']]))])
-# Crop the official full-network canvas to the ten selected lines, preserving one uniform scale.
+# Crop the official full-network canvas to the selected lines, preserving one uniform scale.
 x0=min(p[0] for p in pos.values())-130;y0=min(p[1] for p in pos.values())-80
 x1=max(p[0] for p in pos.values())+190;y1=max(p[1] for p in pos.values())+110
 shift=lambda p:[round(p[0]-x0,2),round(p[1]-y0,2)]
 labels={}
 for name,p in pos.items():
- candidates=[l for l in geo['labels'] if l['text']==name]
+ candidates=[l for l in geo['labels'] if l['text']==('上海儿童' if name=='上海儿童医学中心' else name)]
  if not candidates:
   if name!='临平路':raise ValueError('Missing official label '+name)
   # Official SVG outlines this Chinese label instead of retaining a text node.
@@ -81,6 +81,7 @@ for name,p in pos.items():
  # Duplicated labels occur on interchange layers; use the closest official placement.
  l=min(candidates,key=lambda l:dist(p,[(l['point'][0]+l['end'][0])/2,(l['point'][1]+l['end'][1])/2]))
  labels[name]={'x':round(l['point'][0]-x0,2),'y':round(l['point'][1]-y0+18,2),'anchor':'start'}
+ if name=='上海儿童医学中心':labels[name]['lines']=['上海儿童','医学中心']
 # Join the official river centerline pieces in geographic order; rounded joins bridge
 # the original SVG's separate bend fills without publishing its full artwork.
 remaining=list(geo['river']);first=min(remaining,key=lambda r:min(r['a'][1],r['b'][1]));remaining.remove(first)

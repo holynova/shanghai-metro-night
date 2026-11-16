@@ -13,8 +13,8 @@ function dayWindow(line,i,d,date){const row=data.lines[line]?.[i];if(!row)return
  notes.push((d===1?'内圈':'外圈')+'；末班终到宜山路，不保证还能绕行一圈');
  notes.push('全程末班 '+row[d===1?3:4]+'；之后的班次终到宜山路');
  }
- else if(['12','14'].includes(line)){
- const forward=d===1,reverse=line==='14';
+ else if(['3','6','12','14','15','18'].includes(line)){
+ const forward=d===1,reverse=['6','14','18'].includes(line);
  first=parseTime(row[forward?(reverse?2:1):(reverse?1:2)]);
  last=parseTime(row[forward?(reverse?4:3):(reverse?3:4)]);regularLast=last;
  const names=lines.find(l=>l.id===line).names;destination=forward?names.at(-1):names[0];
