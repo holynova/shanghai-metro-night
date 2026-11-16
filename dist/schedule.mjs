@@ -8,6 +8,18 @@ export function todayShanghai(date=new Date()){return new Intl.DateTimeFormat('s
 function dayWindow(line,i,d,date){const row=data.lines[line]?.[i];if(!row)return null;let first,last,regularLast,extra=[],destination,notes=[];
  if(line==='1'){const north=d===1;first=parseTime(row[north?1:3]);const early=north?parseTime(row[2]):null;if(early!==null){first=Math.min(first,early);notes.push('清晨首班仅到上海火车站；往富锦路首班 '+row[1]);}last=parseTime(row[extended(date)?north?6:7:north?4:5]);destination=north?'富锦路':'莘庄';regularLast=last;}
  else if(line==='8'){first=parseTime(row[d===1?2:1]);last=parseTime(row[extended(date)?d===1?6:5:d===1?4:3]);regularLast=last;destination=d===1?'市光路':'沈杜公路';}
+ else if(line==='4'){
+ first=parseTime(row[d===1?1:2]);last=parseTime(row[d===1?5:6]);regularLast=last;destination='宜山路';
+ notes.push((d===1?'内圈':'外圈')+'；末班终到宜山路，不保证还能绕行一圈');
+ notes.push('全程末班 '+row[d===1?3:4]+'；之后的班次终到宜山路');
+ }
+ else if(['12','14'].includes(line)){
+ const forward=d===1,reverse=line==='14';
+ first=parseTime(row[forward?(reverse?2:1):(reverse?1:2)]);
+ last=parseTime(row[forward?(reverse?4:3):(reverse?3:4)]);regularLast=last;
+ const names=lines.find(l=>l.id===line).names;destination=forward?names.at(-1):names[0];
+ notes.push('采用官方常规首末班表；不套用其他线路的周末延时');
+ }
  else if(['7','9','13'].includes(line)){
  const forward=d===1,reverseColumns=line==='13';
  first=parseTime(row[forward?(reverseColumns?2:1):(reverseColumns?1:2)]);
@@ -46,5 +58,5 @@ if(extended(date))notes.push('周五/周六仅虹桥火车站—新江湾城区�
 else if(['上海动物园','伊犁路','虹桥路','陕西南路','南京东路','海伦路','四平路'].includes(edge.from))notes.push('定点加班车在本站只下不上，不延长上车时间');
 const latest=candidates.reduce((a,b)=>a.last>b.last?a:b);return {first:Math.min(...regular.map(c=>c.first)),last:latest.last,regularLast:Math.max(...regular.map(c=>c.last)),destination:latest.destination,notes,date};
 }
-export function edgeInfo(edge,date,minute){if(edge.line!=='10'){const l=lines.find(l=>l.id===edge.line),i=l.names.indexOf(edge.from),j=l.names.indexOf(edge.to);return directionInfo(edge.line,i,Math.sign(j-i),date,minute);}
+export function edgeInfo(edge,date,minute){if(edge.line!=='10'){const l=lines.find(l=>l.id===edge.line),i=l.names.indexOf(edge.from),j=l.names.indexOf(edge.to);const d=edge.line==='4'?((i+1)%l.names.length===j?1:-1):Math.sign(j-i);const result=directionInfo(edge.line,i,d,date,minute);return {...result,directionLabel:edge.line==='4'?(d===1?'内圈':'外圈'):null};}
 const current=tenWindow(edge,date),previous=tenWindow(edge,dateShift(date,-1));if(!current)return {state:'unknown',reason:'数据待核实',notes:[],remaining:null};const carry=previous&&previous.last-1440>minute;const w=carry?previous:current;const t=carry?minute+1440:minute;const open=carry||(minute>=w.first&&minute<w.last),extraOnly=!!open&&t>=w.regularLast;return {...w,state:open?'open':'closed',reason:open?(extraOnly?'仅剩定点加班车':carry?'前一运营日服务延续':'仍在服务时段'):minute<current.first?'首班尚未开始':'本站该方向已收车',extraOnly,carry:!!carry,remaining:open?w.last-t:null};}

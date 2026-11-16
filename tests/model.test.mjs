@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {lines,stations,serviceState,shanghaiMinute} from '../dist/network.mjs';
-test('seven lines retain all stations and merge transfer nodes',()=>{assert.equal(lines[0].names.length,28);assert.equal(lines[1].names.length,31);assert.equal(stations.length,202);assert.equal(lines[2].names.length,30);assert.equal(lines[3].names.length,37);});
+test('ten lines retain all stations and merge transfer nodes',()=>{assert.equal(lines[0].names.length,28);assert.equal(lines[1].names.length,31);assert.equal(stations.length,258);assert.equal(lines[2].names.length,30);assert.equal(lines[3].names.length,37);});
 test('last departure has already left at cutoff; downstream remains available',()=>{assert.equal(serviceState([{first:300,last:1380}],1382),'closed');assert.equal(serviceState([{first:305,last:1385}],1382),'open');assert.equal(serviceState([{first:300,last:1380}],1380),'closed');});
 test('unknown does not mean closed',()=>assert.equal(serviceState(undefined,1382),'unknown'));
 test('previous service day and morning reopening',()=>{const windows=[{first:-1140,last:15},{first:300,last:1455}];assert.equal(serviceState(windows,5),'open');assert.equal(serviceState(windows,100),'closed');assert.equal(serviceState(windows,300),'open');});
@@ -17,7 +17,7 @@ import {edges,stationLines} from '../dist/network.mjs';
 import {edgeInfo} from '../dist/schedule.mjs';
 import {positions} from '../dist/layout.mjs';
 const ten=(from,to,date,minute)=>edgeInfo({line:'10',from,to},date,minute);
-test('all 436 real directed edges have verified daytime service',()=>{assert.equal(edges.length,436);for(const e of edges){const s=edgeInfo(e,'2026-11-16',720);assert.equal(s.state,'open',JSON.stringify(e));assert.ok(s.first<s.last);assert.ok(positions[e.from]&&positions[e.to]);}});
+test('all 608 real directed edges have verified daytime service',()=>{assert.equal(edges.length,608);for(const e of edges){const s=edgeInfo(e,'2026-11-16',720);assert.equal(s.state,'open',JSON.stringify(e));assert.ok(s.first<s.last);assert.ok(positions[e.from]&&positions[e.to]);}});
 test('branch junction has three neighbours, never connects branch to Hongqiao directly',()=>{assert.deepEqual(edges.filter(e=>e.line==='10'&&e.from==='龙溪路').map(e=>e.to).sort(),['上海动物园','水城路','龙柏新村'].sort());assert.ok(!edges.some(e=>e.from==='龙柏新村'&&e.to==='虹桥火车站'));});
 test('Friday late service excludes Hangzhong branch and north of Xinjiangwancheng',()=>{assert.equal(ten('龙溪路','龙柏新村','2026-11-20',1420).state,'closed');assert.equal(ten('龙溪路','上海动物园','2026-11-20',1420).state,'open');assert.equal(ten('殷高东路','新江湾城','2026-11-20',1435).state,'open');assert.equal(ten('新江湾城','国帆路','2026-11-20',1435).state,'closed');assert.equal(ten('龙柏新村','龙溪路','2026-11-20',1435).state,'closed');});
 test('10 extra boarding only at three Hongqiao stations on ordinary days',()=>{assert.equal(ten('虹桥火车站','虹桥2号航站楼','2026-11-16',1365).extraOnly,true);assert.equal(ten('虹桥1号航站楼','上海动物园','2026-11-16',1382).state,'open');assert.equal(ten('虹桥1号航站楼','上海动物园','2026-11-16',1384).state,'closed');assert.equal(ten('上海动物园','龙溪路','2026-11-16',1380).state,'closed');});
@@ -49,8 +49,48 @@ test('13 extension stops at Huapeng with opposite directions independent',()=>{
  assert.equal(route('13','东明路','成山路','2026-11-21',1).state,'open');
 });
 test('new transfer stations share one node and all edges remain in map bounds',()=>{
- assert.deepEqual(stationLines('静安寺').map(l=>l.id),['2','7']);
+ assert.deepEqual(stationLines('静安寺').map(l=>l.id),['2','7','14']);
  assert.deepEqual(stationLines('长寿路').map(l=>l.id),['7','13']);
  assert.deepEqual(stationLines('马当路').map(l=>l.id),['9','13']);
  for(const p of Object.values(positions)){assert.ok(p[0]>=0&&p[0]<=3000&&p[1]>=0&&p[1]<=1800);}
+});
+
+test('4 is a closed ring with exactly two distinct outgoing directions per station',()=>{
+ const line=lines.find(l=>l.id==='4');assert.equal(line.names.length,26);
+ assert.equal(edges.filter(e=>e.line==='4').length,52);
+ for(const name of line.names)assert.equal(edges.filter(e=>e.line==='4'&&e.from===name).length,2);
+ assert.ok(edges.some(e=>e.line==='4'&&e.from==='宜山路'&&e.to==='上海体育馆'));
+});
+test('4 Yishan departure uses separate official rows and is never an arrival',()=>{
+ for(const to of ['虹桥路','上海体育馆']){
+  assert.equal(route('4','宜山路',to,'2026-11-16',324).state,'closed');
+  assert.equal(route('4','宜山路',to,'2026-11-16',325).state,'open');
+  assert.equal(route('4','宜山路',to,'2026-11-16',1354).state,'open');
+  assert.equal(route('4','宜山路',to,'2026-11-16',1355).state,'closed');
+ }
+ assert.equal(route('4','宜山路','虹桥路','2026-11-16',720).directionLabel,'内圈');
+ assert.equal(route('4','宜山路','上海体育馆','2026-11-16',720).directionLabel,'外圈');
+});
+test('4 last services terminate at Yishan while the opposite edge closes independently',()=>{
+ assert.equal(route('4','上海体育馆','宜山路','2026-11-20',1415).state,'open');
+ assert.equal(route('4','上海体育馆','宜山路','2026-11-20',1416).state,'closed');
+ assert.equal(route('4','虹桥路','宜山路','2026-11-20',1415).state,'open');
+ assert.equal(route('4','虹桥路','延安西路','2026-11-20',1415).state,'closed');
+ assert.equal(route('4','上海体育馆','宜山路','2026-11-20',1415).destination,'宜山路');
+ assert.equal(route('4','虹桥路','宜山路','2026-11-21',0).state,'closed');
+});
+test('12 and 14 use the correct opposite table headings with no Friday extension',()=>{
+ for(const date of ['2026-11-16','2026-11-20']){
+  assert.equal(route('12','陕西南路','南京西路',date,1381).state,'open');
+  assert.equal(route('12','陕西南路','南京西路',date,1382).state,'closed');
+  assert.equal(route('12','陕西南路','嘉善路',date,1382).state,'open');
+  assert.equal(route('14','静安寺','一大会址·黄陂南路',date,1377).state,'open');
+  assert.equal(route('14','静安寺','一大会址·黄陂南路',date,1378).state,'closed');
+  assert.equal(route('14','静安寺','武定路',date,1378).state,'open');
+ }
+});
+test('all lines have complete service data on ordinary and extended days at all key hours',()=>{
+ for(const date of ['2026-11-16','2026-11-20','2026-11-21'])for(const minute of [0,30,300,720,1350,1380,1439])for(const e of edges){
+  const s=edgeInfo(e,date,minute);assert.notEqual(s.state,'unknown',JSON.stringify(e));assert.ok(Number.isFinite(s.first)&&Number.isFinite(s.last));
+ }
 });
