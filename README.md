@@ -1,46 +1,76 @@
-# 末班之后 / Shanghai Metro Night
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="末班之后 Shanghai Metro Night — 上海地铁双向首末班时间地图：14 条线路、338 个车站">
+</p>
 
-全屏线路图搭配悬浮搜索、地图工具与时间轴，查看上海地铁 14 条线路、338 个车站的双向服务状态。站点与线路沿用官方示意图布局，首末班来自官方时刻表；支持站名搜索、浅深色模式与收发车放映：自动快进平稳时段，弹幕提示线路开通与收车。灰色表示该方向当前无后续班次可上车，不代表轨道上没有列车，也不保证换乘成功。数据核验于 2026-11-16，不含临时运营调整。
+<p align="center">
+  <a href="https://xiaosang.cc/shanghai-metro-night/">▶ 在线体验 Try Online</a>
+  ·
+  <a href="https://github.com/holynova/shanghai-metro-night">GitHub 仓库</a>
+</p>
 
-Use a full-screen schematic with floating search, map tools and timeline to explore the first and last boarding times of 14 Shanghai Metro lines and 338 stations on the official schematic layout. Search stations, switch themes, or watch a daily opening-and-closing film with automatic fast-forward and timed announcements. Gray means no later boarding service at the selected station and direction. This is a published timetable snapshot, not live train tracking or a transfer guarantee.
+末班之后是一张上海地铁双向首末班时间地图：全屏线路图搭配悬浮搜索与时间轴，拖动时间，看 14 条线路、338 个车站的每个方向在当前时刻还能不能上车。站点与线路沿用官方示意图布局，首末班来自官方时刻表。
 
-![浅色地图 / Light map](assets/screenshot.png)
+Shanghai Metro Night is a first/last-train map for the Shanghai Metro: a full-screen schematic with floating search and a timeline. Drag the time to see, for each of 14 lines and 338 stations, whether you can still board in either direction. Station layout follows the official schematic; first/last times come from official timetables.
 
-- [在线体验 / Live](https://xiaosang.cc/shanghai-metro-night/)
-- [GitHub Repo](https://github.com/holynova/shanghai-metro-night)
-- [深色预览 / Dark preview](assets/screenshot-dark.png)
-- [收发车放映 / Timetable film](assets/screenshot-cinema.png)
+## 截图 / Screenshots
 
-<img src="assets/qr.png" width="180" alt="扫码打开上海地铁时间地图 / Open the metro map">
+<p align="center">
+  <img src="./assets/readme/screenshot-desktop.png" width="100%" alt="桌面端：全屏地铁线路图，所选时间 23:10，底部时间轴从 00:00 到 23:59">
+</p>
 
-## 本地运行 / Run locally
+<p align="center">
+  <img src="./assets/readme/screenshot-mobile.png" width="300" alt="移动端：同一张时间地图，竖屏下悬浮搜索与时间轴">
+</p>
+
+## 功能 / Features
+
+- **双向服务状态**：每个车站、每个方向，当前时刻有无后续班次可上车，一目了然；灰色表示该方向当前无后续班次。
+- **时间轴**：拖动或播放，从 00:00 到 23:59 看全天服务变化；支持「现在」一键回到当前时刻。
+- **站名搜索**：悬浮搜索框，输入站名快速定位。
+- **收发车放映**：自动播放一天的开通与收车，平稳时段自动快进，弹幕提示线路开通与收车。
+- **浅色 / 深色模式**：一键切换。
+- **14 条线路**：1、2、3、4、6、7、8、9、10、12、13、14、15、18 号线，共 338 个车站。
+- **数据来源页**：站内 `sources.html` 列出每条线路的官方来源。
+
+## 数据说明 / About the Data
+
+- 首末班时刻取自官方时刻表，地图布局取自官方示意图（版本 D202512），数据核验于 2026-11-16，不含临时运营调整。
+- 灰色只表示该方向当前无后续班次可上车，不代表轨道上没有列车，也不保证换乘成功。
+- 这是已公布时刻表的快照，不是实时列车追踪。
+- 本项目为独立作品，不隶属于上海地铁。
+
+## 本地运行 / Run Locally
+
+需要 Node.js 与 Python 3：
 
 ```bash
 npm ci
-npm test
+npm test     # 38 项测试，全部通过
 npm run build
-npm run dev
+npm run dev  # 打开 http://localhost:5179
 ```
 
-Requires Node.js and Python 3. Open http://localhost:5179.
+## 技术 / Tech
 
-## 发布 / Deploy
+- 纯前端：ES 模块 + SVG 示意图，零框架、零构建依赖（构建脚本只做数据导入与语法检查）。
+- 官方数据快照保存在 `sources/`，导入脚本在 `scripts/`（`import-official.mjs`、`import-map.py`）。
 
-```bash
-npm run deploy:check
-npm run deploy -- /path/to/holynova.github.io
+```
+dist/index.html        入口：全屏地图 + 悬浮搜索 + 时间轴
+dist/app.mjs           应用逻辑
+dist/map-data.mjs      338 个车站坐标与线路路径（官方示意图版式）
+dist/official-data.mjs 14 条线路首末班时刻表
+dist/schedule.mjs      时刻计算
+dist/network.mjs       线网模型
+dist/show-plan.mjs     收发车放映编排
+tests/                 38 项测试（模型 / 放映 / 时间轴）
 ```
 
-Shared Worker `xiaosang-portfolio` · `xiaosang.cc/shanghai-metro-night/` · v1.0.2
+## English
 
-源码与部署配置统一在 main；本地手动发布，不使用自动部署分支或 workflow。
-Source and deployment configuration share main. Deploy manually from the committed production build.
+**Shanghai Metro Night** maps first and last boarding times across the Shanghai Metro — 14 lines, 338 stations, both directions — on the official schematic layout. Drag the timeline from 00:00 to 23:59 and watch which stations you can still board at any moment.
 
-官方数据与地图来源保存在 sources/；本项目不隶属于上海地铁。详细规则见站内数据来源页。
-Official source snapshots are retained in sources/. This independent project is not affiliated with Shanghai Metro.
-
-应用产物同步到作品集 master 的 shanghai-metro-night/ 后提交推送，再运行发布命令；脚本检查两边产物完全一致，防止只上传本站而覆盖其他项目。
-Copy dist into the portfolio master route, commit and push both repositories, then deploy. The release script checks that all project assets match.
-
-共享站点发布还需要完整图库产物；遵循作品集的 XIAOSANG_GALLERY_DIST 配置，缺失时构建会停止，避免覆盖其他作品。
-The shared build also requires the complete gallery assets via XIAOSANG_GALLERY_DIST and refuses partial publication.
+- **Per-direction status**: gray means no later boarding service in that direction at the selected time — not that the tracks are empty, and not a transfer guarantee.
+- **Search** any station; **light/dark themes**; a **timetable film** mode that plays the day's openings and closings with auto fast-forward through quiet hours and timed announcements.
+- **Data**: first/last times from official timetables, layout from the official schematic (version D202512), verified 2026-11-16; excludes temporary service changes. A published-timetable snapshot, not live tracking. An independent project, not affiliated with Shanghai Metro.
+- **Run it**: `npm ci && npm test` (38 passing) `&& npm run build && npm run dev` → http://localhost:5179. Pure frontend ES modules + SVG, zero framework.
